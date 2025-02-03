@@ -3,12 +3,15 @@ import axios from "axios"
 
 let initialState = {
     list : [],
+    status : 'all'
 }
 
-export const getProducts = createAsyncThunk('List/fetchAll', async () => {
+
+export const getNewslist = createAsyncThunk('List/fetchAll', async (name) => {
     try {
-        const response = await axios.get(`http://localhost:5000/products`);
-        return response.data;
+        const filter = name === "all" ? '' : `&category=${name}`;
+        const response = await axios.get(`https://newsdata.io/api/1/latest?country=kr${filter}&apikey=pub_64515215181728cbe7be384f9a473ecddce17`);
+        return response.data.results;
     } catch(error) {
         console.error(error)
     }
@@ -17,16 +20,20 @@ export const getProducts = createAsyncThunk('List/fetchAll', async () => {
 const listSlice = createSlice({
     name: "List",
     initialState,
-    reducers : {},
+    reducers : {
+        changeStatus(state, action) {
+            state.status = action.payload
+        }
+    },
     extraReducers : (builder) => {
         builder
-        .addCase(getProducts.pending, (state, action)=>{
+        .addCase(getNewslist.pending, (state, action)=>{
             // state.status = "loading"
         })
-        .addCase(getProducts.fulfilled, (state, action)=>{
+        .addCase(getNewslist.fulfilled, (state, action)=>{
             state.list = action.payload;
         })
-        .addCase(getProducts.rejected, (state, action)=>{
+        .addCase(getNewslist.rejected, (state, action)=>{
             // state.status = "failed"
         })
     }
@@ -34,4 +41,4 @@ const listSlice = createSlice({
 
 export default listSlice.reducer
 
-export const {getList} = listSlice.actions
+export const {changeStatus} = listSlice.actions

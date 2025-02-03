@@ -1,28 +1,25 @@
-import { Route, Routes } from 'react-router-dom';
 import './css/layout.css';
-import Header from './component/Header';
-import Main from './component/Main';
-import Login from './component/Login';
-import { getProducts } from './redux/slice/listSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import Newstab from './component/Newstab';
+import { getNewslist } from './redux/slice/listSlice';
+import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
+import NewsList from './component/NewsList';
 
 function App() {
 
     const dispatch = useDispatch();
-    const {list, status} = useSelector(state=>state.List);
-
+    
     useEffect(()=>{
-        dispatch(getProducts());
-    }, [dispatch])
+        dispatch(getNewslist('all'));
+    }, [])
 
     return (
         <div className="wrap">
-            <Header />
-            <Routes>
-                <Route path='/' element={<Main list={list} />}/>
-                <Route path='/login' element={<Login />} />
-            </Routes>
+            <div className='inner'>
+                <h1 className='title'>Today News</h1>
+                <Newstab />
+                <NewsList />
+            </div>
         </div>
     );
 }
